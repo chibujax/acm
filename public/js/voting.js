@@ -329,7 +329,7 @@ async function loadBallot(container) {
     const candidateTemplate = document.getElementById('candidateTemplate');
     
     // Create position sections
-    data.positions.forEach(position => {
+    data.positions.forEach((position, index) => {
       // Clone position template
       const positionSection = positionTemplate.content.cloneNode(true);
       const positionElement = positionSection.querySelector('.position-section');
@@ -339,6 +339,9 @@ async function loadBallot(container) {
       // Set position data
       positionElement.dataset.positionId = position.id;
       positionTitle.textContent = position.name;
+      
+      // Add custom class for alternating colors (though CSS :nth-child should handle this)
+      positionElement.classList.add(index % 2 === 0 ? 'position-even' : 'position-odd');
       
       // Add candidates
       if (position.candidates && position.candidates.length > 0) {
@@ -353,7 +356,7 @@ async function loadBallot(container) {
           
           // Set candidate data
           candidateElement.dataset.candidateId = candidate.id;
-          candidatePhoto.src = '/images/' + candidate.photo || '/images/placeholder.png';
+          candidatePhoto.src = candidate.photo ? '/images/' + candidate.photo : '/images/placeholder.png';
           candidatePhoto.alt = candidate.name;
           candidateName.textContent = candidate.name;
           candidateInfo.textContent = candidate.info || '';

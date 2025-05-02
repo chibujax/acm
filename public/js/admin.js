@@ -32,6 +32,23 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
+      const permissions = await checkAdminPermissions();
+    
+      // Show/hide election control buttons based on permissions
+      if (startElectionBtn && stopElectionBtn) {
+        if (!permissions.includes('manage_election')) {
+          startElectionBtn.style.display = 'none';
+          stopElectionBtn.style.display = 'none';
+          
+          // Add a message indicating limited permissions
+          const controlsContainer = startElectionBtn.parentElement;
+          const permissionMessage = document.createElement('p');
+          permissionMessage.className = 'permission-message';
+          permissionMessage.textContent = 'You do not have permission to start or end elections';
+          controlsContainer.appendChild(permissionMessage);
+        }
+      }
+      
       // Load dashboard data
       await loadDashboardData();
       
@@ -63,6 +80,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show success message
             showAdminMessage('Election started successfully', 'success');
+            
+            // Update button state - make these changes
+            startElectionBtn.disabled = true;
+            startElectionBtn.textContent = 'Election Started';
             
           } catch (error) {
             console.error('Error starting election:', error);
@@ -151,14 +172,17 @@ document.addEventListener('DOMContentLoaded', function() {
           if (data.electionStatus === 'In Progress') {
             electionStatusElement.style.color = '#2ecc71';
             startElectionBtn.disabled = true;
+            startElectionBtn.textContent = 'Election In Progress'; // Change this line
             stopElectionBtn.disabled = false;
           } else if (data.electionStatus === 'Ended') {
             electionStatusElement.style.color = '#e74c3c';
             startElectionBtn.disabled = true;
+            startElectionBtn.textContent = 'Start Election'; 
             stopElectionBtn.disabled = true;
           } else {
             electionStatusElement.style.color = '';
             startElectionBtn.disabled = false;
+            startElectionBtn.textContent = 'Start Election';
             stopElectionBtn.disabled = true;
           }
         }
@@ -284,6 +308,24 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
   }
+
+  async function checkAdminPermissions() {
+    try {
+      // Fetch admin permissions
+      const response = await fetch('/api/admin/permissions');
+      
+      if (!response.ok) {
+        console.warn('Failed to fetch admin permissions');
+        return []; // Return empty array instead of failing
+      }
+      
+      const data = await response.json();
+      return data.permissions || [];
+    } catch (error) {
+      console.warn('Error checking admin permissions:', error);
+      return []; // Return empty array on error
+    }
+  }
   
   /**
    * Display a message in the admin dashboard
@@ -313,3 +355,28 @@ document.addEventListener('DOMContentLoaded', function() {
       messageContainer.style.display = 'none';
     }, 5000);
   }
+
+  // Add this to the end of admin.js or include directly in your admin pages
+document.addEventListener('DOMContentLoaded', function() {
+  const logoutBtn = document.getElementById('logoutBtn');
+  
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async function() {
+      try {
+        // Send logout request
+        const response = await fetch('/api/auth/admin/logout', {
+          method: 'POST'
+        });
+        
+        if (response.ok) {
+          // Redirect to login page
+          window.location.href = '/admin/login';
+        } else {
+          console.error('Logout failed');
+        }
+      } catch (error) {
+        console.error('Error logging out:', error);
+      }
+    });
+  }
+});

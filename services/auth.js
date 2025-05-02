@@ -4,6 +4,7 @@ const fileDb = require('./fileDb');
 const smsService = require('./sms');
 const security = require('../utils/security');
 const config = require('../config/config');
+const bcrypt = require('bcrypt');
 
 // Store active OTPs in memory (in production, use a proper database or Redis)
 const activeOTPs = new Map();
@@ -272,6 +273,11 @@ async function endSession(sessionToken) {
   }
 }
 
+async function hashPassword(plainPassword) {
+  const saltRounds = 10;
+  return await bcrypt.hash(plainPassword, saltRounds);
+}
+
 /**
  * Verify admin credentials
  * @param {string} username - Admin username
@@ -280,28 +286,42 @@ async function endSession(sessionToken) {
  */
 async function verifyAdmin(username, password) {
   try {
-    console.log(`Verifying admin credentials: username=${username}`);
-    console.log(`Config admin username: ${config.admin.username}`);
+    // Get admin accounts
+    const admins = await fileDb.read('admins');
     
-    // Check admin credentials
-    if (username !== config.admin.username || password !== config.admin.password) {
-      console.log('Admin credentials verification failed');
+    // Find the admin by username
+    const admin = admins.find(admin => admin.username === username);
+    
+    if (!admin) {
       return {
         success: false,
         message: 'Invalid admin credentials'
       };
     }
     
-    console.log('Admin credentials verified successfully');
+    // Compare the provided password with the stored hash
+    const passwordMatch = await bcrypt.compare(password, admin.passwordHash);
+    
+    if (!passwordMatch) {
+      return {
+        success: false,
+        message: 'Invalid admin credentials'
+      };
+    }
+    
+    // Check if the admin is using the default password
+    const isUsingDefaultPassword = admin.isDefaultPassword === true;
     
     // Generate admin token
     const adminToken = security.generateSessionToken();
     
-    // Create admin session record
+    // Create admin session record with admin ID
     const now = Date.now();
     const sessionRecord = {
       id: adminToken,
       isAdmin: true,
+      adminId: admin.id,
+      adminUsername: admin.username,
       createdAt: now,
       expiresAt: now + config.session.duration,
       ipAddress: null, // Will be set by the controller
@@ -311,19 +331,17 @@ async function verifyAdmin(username, password) {
     // Store admin session
     await fileDb.create('sessions', sessionRecord);
     
-    console.log(`Admin session created with token: ${adminToken.substring(0, 10)}...`);
-    
     return {
       success: true,
       message: 'Admin login successful',
-      adminToken
+      adminToken,
+      isUsingDefaultPassword
     };
   } catch (err) {
     console.error('Error verifying admin:', err);
     throw err;
   }
 }
-
 /**
  * Validate an admin session
  * @param {string} adminToken - The admin token to validate
@@ -368,5 +386,6 @@ module.exports = {
   validateSession,
   endSession,
   verifyAdmin,
-  validateAdminSession
+  validateAdminSession,
+  hashPassword
 };

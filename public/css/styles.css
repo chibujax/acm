@@ -32,6 +32,13 @@ header h1 {
   margin-bottom: 5px;
 }
 
+
+
+.admin-controls {
+  text-align: right;
+  margin-right: 10px;
+}
+
 /* Form Styles */
 .form-group {
   margin-bottom: 20px;
@@ -464,6 +471,64 @@ input[type="email"] {
 .result-summary-list li.winner {
   font-weight: bold;
   color: #28a745;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.user-controls, .admin-controls {
+  margin-left: auto;
+}
+
+/* Add these styles to your CSS file */
+.position-section {
+  margin-bottom: 30px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Even-numbered positions */
+.position-section:nth-child(even) {
+  background-color: #f0f7ff; /* Light blue */
+}
+
+/* Odd-numbered positions */
+.position-section:nth-child(odd) {
+  background-color: #fff5f5; /* Light red/pink */
+}
+
+/* Additional styling to make the positions more visually appealing */
+.position-title {
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 1.4em;
+}
+
+.candidate-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.candidate-card {
+  transition: transform 0.2s ease-in-out;
+}
+
+.candidate-card:hover {
+  transform: translateY(-5px);
 }
 
 /* Footer Styles */

@@ -1,5 +1,6 @@
 // auth.js - Authentication middleware
 const authService = require('../services/auth');
+const fileDb = require('../services/fileDb');
 
 /**
  * Middleware to authenticate user sessions
@@ -155,9 +156,121 @@ async function attachUserIfAuthenticated(req, res, next) {
   }
 }
 
+// In middlewares/auth.js - Update authenticateAdmin
+
+async function authenticateAdmin(req, res, next) {
+  try {
+    // Get admin token from cookies
+    const adminToken = req.cookies.admin_token;
+    
+    if (!adminToken) {
+      return res.status(401).json({
+        success: false,
+        message: 'Admin authentication required'
+      });
+    }
+    
+    // Get session details (now with admin ID)
+    const session = await fileDb.findBy('sessions', 'id', adminToken);
+    
+    if (!session || !session.isAdmin || Date.now() > session.expiresAt) {
+      // Clear invalid admin token cookie
+      res.clearCookie('admin_token');
+      
+      return res.status(401).json({
+        success: false,
+        message: 'Admin session expired or invalid'
+      });
+    }
+    
+    // Attach admin info to request
+    req.isAdmin = true;
+    req.adminId = session.adminId;
+    req.adminUsername = session.adminUsername;
+    
+    // Proceed to the next middleware or route handler
+    next();
+  } catch (err) {
+    console.error('Admin authentication error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+
+// In middlewares/auth.js - Replace your checkPermission function with this:
+
+/**
+ * Middleware to check admin permissions
+ */
+function checkPermission(req, res, next) {
+  try {
+    // This middleware should run after authenticateAdmin
+    if (!req.isAdmin || !req.adminId) {
+      return res.status(401).json({
+        success: false,
+        message: 'Admin authentication required'
+      });
+    }
+    
+    // Get admin details
+    fileDb.findBy('admins', 'id', req.adminId)
+      .then(admin => {
+        if (!admin) {
+          return res.status(404).json({
+            success: false,
+            message: 'Admin not found'
+          });
+        }
+        
+        // Store permissions in request object for later use
+        req.adminPermissions = admin.permissions || [];
+        
+        // Admin has been found, proceed
+        next();
+      })
+      .catch(err => {
+        console.error('Error getting admin details:', err);
+        return res.status(500).json({
+          success: false,
+          message: 'Internal server error'
+        });
+      });
+  } catch (err) {
+    console.error('Permission check error:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+
+/**
+ * Middleware to check if admin has a specific permission
+ * @param {string} permission - The permission to check
+ */
+function hasPermission(permission) {
+  return function(req, res, next) {
+    // Check if the required permission exists in admin's permissions
+    if (!req.adminPermissions || !req.adminPermissions.includes(permission)) {
+      return res.status(403).json({
+        success: false,
+        message: 'You do not have permission to perform this action'
+      });
+    }
+    
+    // Admin has the permission, proceed
+    next();
+  };
+}
+
+
 module.exports = {
   authenticateUser,
   authenticateAdmin,
   checkVotingEligibility,
-  attachUserIfAuthenticated
+  attachUserIfAuthenticated,
+  checkPermission,
+  hasPermission 
 };

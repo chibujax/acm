@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 const fileDb = require('./services/fileDb');
 const security = require('./utils/security');
+const authMiddleware = require('./middlewares/auth');
+const authService = require('./services/auth');
 
 // Initialize express app
 const app = express();
@@ -80,6 +82,38 @@ app.get('/admin/members', (req, res) => {
 
 app.get('/admin/settings', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'admin', 'settings.html'));
+});
+
+app.get('/admin/change-password', authMiddleware.authenticateAdmin, (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'admin', 'change-password.html'));
+});
+// Add this route to your app.js file
+app.get('/admin', async (req, res) => {
+  try {
+    // Get admin token from cookies
+    const adminToken = req.cookies.admin_token;
+    
+    if (!adminToken) {
+      // Not logged in, redirect to login page
+      return res.redirect('/admin/login');
+    }
+    
+    // Validate the admin session
+    const isValidAdmin = await authService.validateAdminSession(adminToken);
+    
+    if (!isValidAdmin) {
+      // Invalid session, clear cookie and redirect to login
+      res.clearCookie('admin_token');
+      return res.redirect('/admin/login');
+    }
+    
+    // Valid admin session, redirect to dashboard
+    res.redirect('/admin/dashboard');
+    
+  } catch (err) {
+    console.error('Error in admin redirect:', err);
+    res.redirect('/admin/login');
+  }
 });
 
 // CSRF token middleware for forms

@@ -27,7 +27,11 @@ router.get('/dashboard', authMiddleware.authenticateAdmin, async (req, res) => {
 /**
  * Start election route
  */
-router.post('/election/start', authMiddleware.authenticateAdmin, async (req, res) => {
+router.post('/election/start', [
+  authMiddleware.authenticateAdmin,
+  authMiddleware.checkPermission,               // First get admin details
+  authMiddleware.hasPermission('manage_election')
+], async (req, res) => {
   try {
     const { duration } = req.body;
     let parsedDuration = null;
@@ -51,6 +55,15 @@ router.post('/election/start', authMiddleware.authenticateAdmin, async (req, res
       return res.status(400).json(result);
     }
     
+    // Log this action
+    const loggingService = require('../services/logging');
+    await loggingService.logAdminAction(
+      req.adminId,
+      req.adminUsername,
+      'start_election',
+      { message: 'Admin started the election', duration: parsedDuration }
+    );
+    
     res.json(result);
   } catch (err) {
     console.error('Error in start election route:', err);
@@ -64,7 +77,11 @@ router.post('/election/start', authMiddleware.authenticateAdmin, async (req, res
 /**
  * End election route
  */
-router.post('/election/stop', authMiddleware.authenticateAdmin, async (req, res) => {
+router.post('/election/stop', [
+  authMiddleware.authenticateAdmin,
+  authMiddleware.checkPermission,               // First get admin details
+  authMiddleware.hasPermission('manage_election')
+], async (req, res) => {
   try {
     // End election
     const result = await votingService.endElection();
@@ -72,6 +89,15 @@ router.post('/election/stop', authMiddleware.authenticateAdmin, async (req, res)
     if (!result.success) {
       return res.status(400).json(result);
     }
+    
+    // Log this action
+    const loggingService = require('../services/logging');
+    await loggingService.logAdminAction(
+      req.adminId,
+      req.adminUsername,
+      'end_election',
+      { message: 'Admin ended the election' }
+    );
     
     res.json(result);
   } catch (err) {
@@ -608,6 +634,35 @@ router.delete('/members/:id', authMiddleware.authenticateAdmin, async (req, res)
     });
   } catch (err) {
     console.error('Error in delete member route:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// In routes/admin.js - Add this new route
+/**
+ * Get admin permissions route
+ */
+router.get('/permissions', authMiddleware.authenticateAdmin, async (req, res) => {
+  try {
+    // Get admin details
+    const admin = await fileDb.findBy('admins', 'id', req.adminId);
+    
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: 'Admin not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      permissions: admin.permissions || []
+    });
+  } catch (err) {
+    console.error('Error in get admin permissions route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'

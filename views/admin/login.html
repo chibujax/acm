@@ -93,10 +93,15 @@
               throw new Error(data.message || 'Failed to log in');
             }
             
-            // Redirect to dashboard with a slight delay to ensure cookie is set
-            setTimeout(() => {
-              window.location.href = '/admin/dashboard';
-            }, 100);
+            // Check if admin needs to change password
+            if (data.isUsingDefaultPassword) {
+              window.location.href = '/admin/change-password';
+            } else {
+              // Redirect to dashboard with a slight delay to ensure cookie is set
+              setTimeout(() => {
+                window.location.href = '/admin/dashboard';
+              }, 100);
+            }
             
           } catch (error) {
             errorMessage.textContent = error.message || 'An error occurred. Please try again later.';

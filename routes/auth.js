@@ -4,6 +4,7 @@ const router = express.Router();
 const authService = require('../services/auth');
 const authMiddleware = require('../middlewares/auth');
 const config = require('../config/config');
+const fileDb = require('../services/fileDb');
 
 /**
  * Login route - Verify member and send OTP
@@ -257,5 +258,105 @@ router.post('/admin/logout', async (req, res) => {
     });
   }
 });
+
+
+// Check if admin needs to change password
+router.get('/admin/check-password', authMiddleware.authenticateAdmin, async (req, res) => {
+    try {
+      // Get admin information from the session
+      const adminId = req.adminId;
+      const admin = await fileDb.findBy('admins', 'id', adminId);
+      
+      if (!admin) {
+        return res.status(404).json({
+          success: false,
+          message: 'Admin not found'
+        });
+      }
+      
+      res.json({
+        success: true,
+        isUsingDefaultPassword: admin.isDefaultPassword === true
+      });
+    } catch (err) {
+      console.error('Error checking admin password status:', err);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error'
+      });
+    }
+  });
+  
+  // Route to change admin password
+  router.post('/admin/change-password', authMiddleware.authenticateAdmin, async (req, res) => {
+    try {
+      const { newPassword, confirmPassword } = req.body;
+      
+      // Basic validation
+      if (!newPassword || !confirmPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'New password and confirmation are required'
+        });
+      }
+      
+      if (newPassword !== confirmPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Passwords do not match'
+        });
+      }
+      
+      if (newPassword.length < 8) {
+        return res.status(400).json({
+          success: false,
+          message: 'Password must be at least 8 characters long'
+        });
+      }
+      
+      // Get admin information from the session
+      const adminId = req.adminId;
+      const admin = await fileDb.findBy('admins', 'id', adminId);
+      
+      if (!admin) {
+        return res.status(404).json({
+          success: false,
+          message: 'Admin not found'
+        });
+      }
+      
+      // Hash the new password
+      const passwordHash = await authService.hashPassword(newPassword);
+      
+      // Update the admin record
+      const updates = {
+        passwordHash,
+        isDefaultPassword: false,
+        updatedAt: Date.now()
+      };
+      
+      await fileDb.update('admins', 'id', adminId, updates);
+      
+      // Log the password change
+      const loggingService = require('../services/logging');
+      await loggingService.logAdminAction(
+        adminId,
+        admin.username,
+        'password_change',
+        { message: 'Admin changed their password' }
+      );
+      
+      res.json({
+        success: true,
+        message: 'Password changed successfully'
+      });
+    } catch (err) {
+      console.error('Error changing admin password:', err);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error'
+      });
+    }
+  });
 
 module.exports = router;

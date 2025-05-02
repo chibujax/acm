@@ -4,7 +4,7 @@ module.exports = {
     // Session settings
     session: {
       cookieName: 'voting_session',
-      secret: process.env.SESSION_SECRET || 'voting-system-secret-key',
+      secret: process.env.SESSION_SECRET,
       duration: 30 * 60 * 1000, // 30 minutes
     },
     
@@ -21,6 +21,8 @@ module.exports = {
       candidates: './data/candidates.json',
       votes: './data/votes.json',
       sessions: './data/sessions.json',
+      admins: './data/admins.json',
+      adminLogs: './data/adminLogs.json',
     },
     
     // Twilio configuration (for SMS OTP)

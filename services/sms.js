@@ -37,7 +37,7 @@ async function sendOTP(phoneNumber, otp) {
   
   try {
     // Format message
-    const message = `Your voting verification code is: ${otp}. This code will expire in 10 minutes.`;
+    const message = `ACM community code is: ${otp}. This code will expire in 10 minutes.`;
     
     // Send SMS via Twilio
     const result = await twilioClient.messages.create({

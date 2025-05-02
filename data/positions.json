@@ -1,0 +1,6 @@
+[
+    {"id": 1, "position": "President", "isActive": true, "name": "President", "description": "President"},
+    {"id": 2, "position": "Vice President", "isActive": true, "name": "Vice President", "description": "Vice President"},
+    {"id": 3, "position": "Secretary", "isActive": true, "name": "Secretary", "description": "Secretary"},
+    {"id": 4, "position": "Treasurer", "isActive": false, "name": "Treasurer", "description": "Treasurer"}
+]

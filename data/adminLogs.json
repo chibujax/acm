@@ -11,5 +11,30 @@
     },
     "ipAddress": null,
     "userAgent": null
+  },
+  {
+    "id": "log_1746200307985_2rts9zfd",
+    "timestamp": 1746200307985,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "start_election",
+    "details": {
+      "message": "Admin started the election",
+      "duration": null
+    },
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "log_1746200451409_5fen5bs7",
+    "timestamp": 1746200451409,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "end_election",
+    "details": {
+      "message": "Admin ended the election"
+    },
+    "ipAddress": null,
+    "userAgent": null
   }
 ]

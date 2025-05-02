@@ -1,0 +1,81 @@
+[
+  {
+    "id": "admin_1746190912056_9884fa",
+    "username": "admin1",
+    "passwordHash": "$2b$10$esbU6CIj4x1OZVC6ZRoRGuqAkjUVVfRAAAf8a/JsaSSESc5glrVl6",
+    "isDefaultPassword": false,
+    "name": "admin1",
+    "email": "admin@admin.com",
+    "role": "admin",
+    "permissions": [
+      "manage_election",
+      "manage_positions",
+      "manage_candidates",
+      "manage_members",
+      "view_results"
+    ],
+    "isActive": true,
+    "createdAt": 1746190912056,
+    "updatedAt": 1746191721982
+  },
+  {
+    "id": "admin_1746190929459_c7f87b",
+    "username": "admin2",
+    "passwordHash": "$2b$10$TuFIk99O6ni5Y3o4ZphqS.LUMQcv/WD/iWyR2CruM/V5bO2oeeLRm",
+    "isDefaultPassword": false,
+    "name": "admin2",
+    "email": "admin2@admin.com",
+    "role": "admin",
+    "permissions": [
+      "view_results"
+    ],
+    "isActive": true,
+    "createdAt": 1746190929459,
+    "updatedAt": 1746198321903
+  },
+  {
+    "id": "admin_1746190947827_9a4ab6",
+    "username": "admin3",
+    "passwordHash": "$2b$10$4PTVgwiqtZDYwz8VRYvxU.quVrZspih9t/vEkQwFLs5YogmCOaCvW",
+    "isDefaultPassword": true,
+    "name": "admin3",
+    "email": "admin3@admin.com",
+    "role": "admin",
+    "permissions": [
+      "view_results"
+    ],
+    "isActive": true,
+    "createdAt": 1746190947827,
+    "updatedAt": 1746190947827
+  },
+  {
+    "id": "admin_1746190961677_eef7d1",
+    "username": "admin4",
+    "passwordHash": "$2b$10$kzcF6r880zbVgUZXU.PDc.RRimq4.SyxshbzPYJLZ1k.iF0HXcsdK",
+    "isDefaultPassword": true,
+    "name": "admin4",
+    "email": "admin4@admin.com",
+    "role": "admin",
+    "permissions": [
+      "view_results"
+    ],
+    "isActive": true,
+    "createdAt": 1746190961677,
+    "updatedAt": 1746190961677
+  },
+  {
+    "id": "admin_1746190972607_af7d71",
+    "username": "admin5",
+    "passwordHash": "$2b$10$1YxNVPaj6H5kj4Ydzr7HyuG8wDPL2QRb4vhDz9QFORc2RiIEF.JxW",
+    "isDefaultPassword": true,
+    "name": "admin5",
+    "email": "admin5@admin.com",
+    "role": "admin",
+    "permissions": [
+      "view_results"
+    ],
+    "isActive": true,
+    "createdAt": 1746190972607,
+    "updatedAt": 1746190972607
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "id": "65669c563f4dc05cbf91d5e5fffe348f828634bcb597e51180f91b5d9a6e9076",
+    "isAdmin": true,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "createdAt": 1746200072364,
+    "expiresAt": 1746201872364,
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "0c71216076ef5a9f63b93cc0c68df7f2f37136ddb2959c1a9204f32482b7d409",
+    "isAdmin": true,
+    "adminId": "admin_1746190929459_c7f87b",
+    "adminUsername": "admin2",
+    "createdAt": 1746200098287,
+    "expiresAt": 1746201898287,
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "c9354c3ee1d2c061d03208803b9f8ae330b3d18ab7fbad53b3f42dc914cd3682",
+    "memberId": "07733476007",
+    "createdAt": 1746200165367,
+    "expiresAt": 1746201965367,
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "d4aac8a8eb422ccb2ddade7600ac116f5be93d81ed3705ae05f06eec7045b7fe",
+    "memberId": "07733476007",
+    "createdAt": 1746200290527,
+    "expiresAt": 1746202093655,
+    "ipAddress": null,
+    "userAgent": null
+  }
+]

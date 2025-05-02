@@ -1,0 +1,8 @@
+[ 
+    {"id": 1, "name": "Alice",   "positionId": 3, "photo": "alice.jpeg", "phone":"1234567890", "isActive": true, "info": ""},  
+    {"id": 2, "name": "Bob",      "positionId": 1, "photo": "bob.jpeg", "phone":"0987654321", "isActive": true, "info": ""},     
+    {"id": 3, "name": "Charlie",  "positionId": 2, "photo": "charlie.jpeg", "phone":"5555555555", "isActive": true, "info": ""},  
+    {"id": 4, "name": "Emma",     "positionId": 1, "photo": "emma.jpeg", "phone": "7777999999", "isActive": true, "info": ""},    
+    {"id": 5, "name": "Frank",    "positionId": 2, "photo":"default.jpeg", "phone":"8888888888", "isActive": true, "info": ""},
+    {"id": 6, "name": "Ben",   "positionId": 3, "photo": "default.jpeg", "phone":"1234567890", "isActive": true, "info": ""}  
+]

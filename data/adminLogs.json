@@ -1,0 +1,15 @@
+[
+  {
+    "id": "log_1746200110279_30e62zwj",
+    "timestamp": 1746200110279,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "start_election",
+    "details": {
+      "message": "Admin started the election",
+      "duration": null
+    },
+    "ipAddress": null,
+    "userAgent": null
+  }
+]

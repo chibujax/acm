@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login - Secure Voting System</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Admin Dashboard</h1>
+      <p>ACM Secure Online Voting System</p>
+    </header>
+    
+    <main>
+      <div class="login-form">
+        <h2>Admin Login</h2>
+        <p>Enter your admin credentials to access the dashboard.</p>
+        
+        <form id="adminLoginForm">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+          </div>
+          
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">Log In</button>
+          </div>
+          
+          <div id="errorMessage" class="error-message" style="display: none;"></div>
+        </form>
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2025 Abia Community Manchester. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    // Handle admin login
+    document.addEventListener('DOMContentLoaded', function() {
+      const adminLoginForm = document.getElementById('adminLoginForm');
+      const errorMessage = document.getElementById('errorMessage');
+      
+      if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          // Clear any previous error messages
+          errorMessage.textContent = '';
+          errorMessage.style.display = 'none';
+          
+          // Get form values
+          const username = document.getElementById('username').value.trim();
+          const password = document.getElementById('password').value;
+          
+          // Basic validation
+          if (!username || !password) {
+            errorMessage.textContent = 'Please enter both username and password';
+            errorMessage.style.display = 'block';
+            return;
+          }
+          
+          // Display loading state
+          const submitButton = adminLoginForm.querySelector('button[type="submit"]');
+          const originalButtonText = submitButton.textContent;
+          submitButton.textContent = 'Logging in...';
+          submitButton.disabled = true;
+          
+          try {
+            // Send login request
+            const response = await fetch('/api/auth/admin/login', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                username,
+                password
+              })
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+              throw new Error(data.message || 'Failed to log in');
+            }
+            
+            // Redirect to dashboard with a slight delay to ensure cookie is set
+            setTimeout(() => {
+              window.location.href = '/admin/dashboard';
+            }, 100);
+            
+          } catch (error) {
+            errorMessage.textContent = error.message || 'An error occurred. Please try again later.';
+            errorMessage.style.display = 'block';
+            
+            // Reset the button
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

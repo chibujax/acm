@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Secure Voting System</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Admin Dashboard</h1>
+      <p>ACM Secure Online Voting System</p>
+    </header>
+    
+    <main>
+      <div class="admin-dashboard">
+        <!-- Summary Cards -->
+        <div class="dashboard-card">
+          <h3>Voting Summary</h3>
+          <div class="stats-display">
+            <div class="stat-card">
+              <div class="stat-number" id="totalVotes">0</div>
+              <div class="stat-label">Total Votes</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="eligibleVoters">0</div>
+              <div class="stat-label">Eligible Voters</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-number" id="participationRate">0%</div>
+              <div class="stat-label">Participation</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Election Status Card -->
+        <div class="dashboard-card">
+          <h3>Election Status</h3>
+          <div class="stats-display">
+            <div class="stat-card">
+              <div class="stat-label">Status</div>
+              <div id="electionStatus">Not Started</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Time Remaining</div>
+              <div id="timeRemaining">N/A</div>
+            </div>
+          </div>
+          <div class="action-buttons">
+            <button id="startElectionBtn" class="btn btn-primary action-btn">Start Election</button>
+            <button id="stopElectionBtn" class="btn btn-danger action-btn">End Election</button>
+          </div>
+        </div>
+        
+        <!-- Results Card -->
+        <div class="dashboard-card">
+          <h3>Live Results</h3>
+          <div id="resultsContainer">
+            <p>Results will be displayed here once the election starts.</p>
+          </div>
+        </div>
+        
+        <!-- Management Links -->
+        <div class="dashboard-card">
+          <h3>Manage Election</h3>
+          <ul class="admin-links">
+            <li><a href="/admin/positions">Manage Positions</a></li>
+            <li><a href="/admin/candidates">Manage Candidates</a></li>
+            <li><a href="/admin/members">Manage Members</a></li>
+            <li><a href="/admin/settings">System Settings</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Election Results Tables -->
+      <div id="detailedResults">
+        <!-- Results tables will be generated here -->
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2025 Abia Community Manchester. All rights reserved.</p>
+    </footer>
+  </div>
+  
+  <!-- Templates for results display -->
+  <template id="positionResultTemplate">
+    <div class="position-results">
+      <h3 class="position-title">Position Name</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Candidate</th>
+            <th>Votes</th>
+            <th>Percentage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Candidate results will be added here -->
+        </tbody>
+      </table>
+    </div>
+  </template>
+  
+  <template id="candidateResultTemplate">
+    <tr>
+      <td class="candidate-name">Candidate Name</td>
+      <td class="votes-count">0</td>
+      <td class="votes-percentage">0%</td>
+    </tr>
+  </template>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

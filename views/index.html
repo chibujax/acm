@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Voting System - Login</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ACM Secure Online Voting System</h1>
+    </header>
+    
+    <main>
+      <div class="login-form">
+        <h2>Member Login</h2>
+        <p>Enter your membership phone number to receive a verification code.</p>
+        
+        <form id="loginForm">          
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" 
+                   placeholder="e.g. +1234567890" required>
+          </div>
+          
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">Send Verification Code</button>
+          </div>
+        </form>
+        
+        <div id="errorMessage" class="error-message"></div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2025 Abia Community Manchester. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script src="/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vote - Secure Voting System</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ACM Secure Online Voting System</h1>
+      <p>Welcome, <span id="memberName">Member</span>!</p>
+    </header>
+    
+    <main>
+      <div class="voting-form">
+        <h2>Cast Your Vote</h2>
+        <p id="electionStatusMessage">Please select one candidate for each position.</p>
+        
+        <div id="electionStatusContainer" class="election-status-container">
+          <!-- Election status info will be displayed here -->
+        </div>
+        
+        <form id="votingForm">
+          <div id="positionsContainer">
+            <!-- Positions and candidates will be dynamically loaded here -->
+            <div class="loading-message">Loading ballot...</div>
+          </div>
+          
+          <div class="form-group" id="submitButtonContainer">
+            <button type="submit" class="btn btn-primary" id="submitVoteBtn">Submit Vote</button>
+          </div>
+        </form>
+        
+        <div id="errorMessage" class="error-message"></div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2025 Abia Community Manchester. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <!-- Template for position sections -->
+  <template id="positionTemplate">
+    <div class="position-section">
+      <h3 class="position-title">Position Name</h3>
+      <div class="candidate-list">
+        <!-- Candidates will be added here -->
+      </div>
+    </div>
+  </template>
+  
+  <!-- Template for candidate cards -->
+  <template id="candidateTemplate">
+    <div class="candidate-card" data-candidate-id="">
+      <img class="candidate-photo" src="/images/default.jpeg" alt="Candidate">
+      <div class="candidate-name">Candidate Name</div>
+      <div class="candidate-info">Additional Info</div>
+      <input type="radio" name="" value="" style="display: none;">
+    </div>
+  </template>
+
+  <script src="/js/voting.js"></script>
+</body>
+</html>

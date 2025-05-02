@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vote Confirmation - Secure Voting System</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ACM Secure Online Voting System</h1>
+    </header>
+    
+    <main>
+      <div class="confirmation-page">
+        <div class="confirmation-icon">✓</div>
+        <h2>Vote Successfully Recorded</h2>
+        <p>Thank you for participating in the election. Your vote has been securely recorded.</p>
+        
+        <div class="vote-details">
+          <h3>Confirmation Details</h3>
+          <p>Vote ID: <span id="voteId"></span></p>
+          <p>Timestamp: <span id="voteTimestamp"></span></p>
+        </div>
+        
+        <div class="action-buttons">
+          <a href="/" class="btn btn-primary">Log Out</a>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>&copy; 2025 Abia Community Manchester. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    // Extract vote details from URL parameters or session
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const voteId = urlParams.get('voteId') || 'Unknown';
+      
+      document.getElementById('voteId').textContent = voteId;
+      document.getElementById('voteTimestamp').textContent = new Date().toLocaleString();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+node_modules
+.DS_Store
+**/.DS_Store
+coverage/
+.coverage
+coverage.json
+coverage.lcov
+.nyc_output/
+*.log
+.env
+copied
+dist
+dist-server
+script_name.py
+data/

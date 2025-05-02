@@ -36,5 +36,67 @@
     },
     "ipAddress": null,
     "userAgent": null
+  },
+  {
+    "id": "log_1746215279572_e003jjei",
+    "timestamp": 1746215279572,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "start_election",
+    "details": {
+      "message": "Admin started the election",
+      "duration": null
+    },
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "log_1746215470574_2ca6kihm",
+    "timestamp": 1746215470574,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "start_election",
+    "details": {
+      "message": "Admin started the election",
+      "duration": null
+    },
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "log_1746215609078_fetgu6ya",
+    "timestamp": 1746215609078,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "end_election",
+    "details": {
+      "message": "Admin ended the election"
+    },
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "log_1746215812301_bri4b526",
+    "timestamp": 1746215812301,
+    "adminId": "admin_1746190947827_9a4ab6",
+    "adminUsername": "admin3",
+    "action": "password_change",
+    "details": {
+      "message": "Admin changed their password"
+    },
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "log_1746215867303_0cmnb2d5",
+    "timestamp": 1746215867303,
+    "adminId": "admin_1746190961677_eef7d1",
+    "adminUsername": "admin4",
+    "action": "password_change",
+    "details": {
+      "message": "Admin changed their password"
+    },
+    "ipAddress": null,
+    "userAgent": null
   }
 ]

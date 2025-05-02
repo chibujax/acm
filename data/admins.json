@@ -36,8 +36,8 @@
   {
     "id": "admin_1746190947827_9a4ab6",
     "username": "admin3",
-    "passwordHash": "$2b$10$4PTVgwiqtZDYwz8VRYvxU.quVrZspih9t/vEkQwFLs5YogmCOaCvW",
-    "isDefaultPassword": true,
+    "passwordHash": "$2b$10$tX7XuerSJplm4njjEPW1YedCa6yrmnqMT/vVFZ3ftHYt8gBAS2J4i",
+    "isDefaultPassword": false,
     "name": "admin3",
     "email": "admin3@admin.com",
     "role": "admin",
@@ -46,13 +46,13 @@
     ],
     "isActive": true,
     "createdAt": 1746190947827,
-    "updatedAt": 1746190947827
+    "updatedAt": 1746215812299
   },
   {
     "id": "admin_1746190961677_eef7d1",
     "username": "admin4",
-    "passwordHash": "$2b$10$kzcF6r880zbVgUZXU.PDc.RRimq4.SyxshbzPYJLZ1k.iF0HXcsdK",
-    "isDefaultPassword": true,
+    "passwordHash": "$2b$10$Cg6H3IuEUo1zFDtM1gHyg.0Zda21eFKL0HJ6IeH0prezvnh6.KE0C",
+    "isDefaultPassword": false,
     "name": "admin4",
     "email": "admin4@admin.com",
     "role": "admin",
@@ -61,7 +61,7 @@
     ],
     "isActive": true,
     "createdAt": 1746190961677,
-    "updatedAt": 1746190961677
+    "updatedAt": 1746215867300
   },
   {
     "id": "admin_1746190972607_af7d71",

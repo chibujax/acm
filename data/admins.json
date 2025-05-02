@@ -66,8 +66,8 @@
   {
     "id": "admin_1746190972607_af7d71",
     "username": "admin5",
-    "passwordHash": "$2b$10$1YxNVPaj6H5kj4Ydzr7HyuG8wDPL2QRb4vhDz9QFORc2RiIEF.JxW",
-    "isDefaultPassword": true,
+    "passwordHash": "$2b$10$SchT7xq1RqKDJA5MShEiQOWGWp0JlzkEyjdpXuR3tKFQxKF9E3zUq",
+    "isDefaultPassword": false,
     "name": "admin5",
     "email": "admin5@admin.com",
     "role": "admin",
@@ -76,6 +76,6 @@
     ],
     "isActive": true,
     "createdAt": 1746190972607,
-    "updatedAt": 1746190972607
+    "updatedAt": 1746215907269
   }
 ]

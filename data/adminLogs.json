@@ -98,5 +98,17 @@
     },
     "ipAddress": null,
     "userAgent": null
+  },
+  {
+    "id": "log_1746215907270_uaqq2o94",
+    "timestamp": 1746215907270,
+    "adminId": "admin_1746190972607_af7d71",
+    "adminUsername": "admin5",
+    "action": "password_change",
+    "details": {
+      "message": "Admin changed their password"
+    },
+    "ipAddress": null,
+    "userAgent": null
   }
 ]

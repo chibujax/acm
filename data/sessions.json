@@ -248,5 +248,13 @@
     "expiresAt": 1746109605110,
     "ipAddress": null,
     "userAgent": null
+  },
+  {
+    "id": "db3f20a823a1667d87beefe5d1bae11443134e3751afde8a0eec3c55013e157b",
+    "isAdmin": true,
+    "createdAt": 1746181229569,
+    "expiresAt": 1746183117670,
+    "ipAddress": null,
+    "userAgent": null
   }
 ]

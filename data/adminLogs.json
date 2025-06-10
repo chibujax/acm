@@ -136,5 +136,17 @@
     },
     "ipAddress": null,
     "userAgent": null
+  },
+  {
+    "id": "log_1749538149649_dmkig2ep",
+    "timestamp": 1749538149649,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "end_election",
+    "details": {
+      "message": "Admin ended the election"
+    },
+    "ipAddress": null,
+    "userAgent": null
   }
 ]

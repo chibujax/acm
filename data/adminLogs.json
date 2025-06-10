@@ -110,5 +110,31 @@
     },
     "ipAddress": null,
     "userAgent": null
+  },
+  {
+    "id": "log_1749537893237_flznoiud",
+    "timestamp": 1749537893237,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "start_election",
+    "details": {
+      "message": "Admin started the election",
+      "duration": null
+    },
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "log_1749538038052_sczpmgq0",
+    "timestamp": 1749538038052,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "start_election",
+    "details": {
+      "message": "Admin started the election",
+      "duration": null
+    },
+    "ipAddress": null,
+    "userAgent": null
   }
 ]

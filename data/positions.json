@@ -1,6 +1,17 @@
+
 [
-    {"id": 1, "position": "President", "isActive": true, "name": "President", "description": "President"},
-    {"id": 2, "position": "Vice President", "isActive": true, "name": "Vice President", "description": "Vice President"},
-    {"id": 3, "position": "Secretary", "isActive": true, "name": "Secretary", "description": "Secretary"},
-    {"id": 4, "position": "Treasurer", "isActive": false, "name": "Treasurer", "description": "Treasurer"}
+    {"id": 1, "position": "Chairman/Chairlady", "isActive": true, "name": "Chairman/Chairlady", "description": "Chairman/Chairlady"},
+    {"id": 2, "position": "Vice Chairman/Chairlady", "isActive": true, "name": "Vice Chairman/Chairlady", "description": "Vice Chairman/Chairlady"},
+    {"id": 3, "position": "General Secretary", "isActive": true, "name": "General Secretary", "description": "General Secretary"},
+    {"id": 4, "position": "Assistant General Secretary", "isActive": true, "name": "Assistant General Secretary", "description": "Assistant General Secretary"},
+    {"id": 5, "position": "Financial Secretary", "isActive": true, "name": "Financial Secretary", "description": "Financial Secretary"},
+    {"id": 6, "position": "Assistant Financial Secretary", "isActive": true, "name": "Assistant Financial Secretary", "description": "Assistant Financial Secretary"},
+    {"id": 7, "position": "Treasurer", "isActive": true, "name": "Treasurer", "description": "Treasurer"},
+    {"id": 8, "position": "PRO", "isActive": true, "name": "PRO", "description": "PRO"},
+    {"id": 9, "position": "Welfare Officer", "isActive": true, "name": "Welfare Officer", "description": "Welfare Officer"},
+    {"id": 10, "position": "Provost", "isActive": true, "name": "Provost", "description": "Provost"},
+    {"id": 11, "position": "Women Leader", "isActive": true, "name": "Women Leader", "description": "Women Leader"},
+    {"id": 12, "position": "Assistant Women Leader", "isActive": true, "name": "Assistant Women Leader", "description": "Assistant Women Leader"},
+    {"id": 13, "position": "Children/Youth Leader", "isActive": true, "name": "Children/Youth Leader", "description": "Children/Youth Leader"},
+    {"id": 14, "position": "Assistant Children/Youth Leader", "isActive": true, "name": "Assistant Children/Youth Leader", "description": "Assistant Children/Youth Leader"}
 ]

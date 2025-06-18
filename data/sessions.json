@@ -134,5 +134,23 @@
     "expiresAt": 1749539919952,
     "ipAddress": null,
     "userAgent": null
+  },
+  {
+    "id": "e95717566c646514b117d4600e3dc7a9ca7033661ae088dc4646cb3798c12b8b",
+    "memberId": "07424065204",
+    "createdAt": 1750236020284,
+    "expiresAt": 1750238333889,
+    "ipAddress": null,
+    "userAgent": null
+  },
+  {
+    "id": "428fa04d2979fe04695bfc02e491e10c0b377bb20065a38b7b0e4dc364b482e6",
+    "isAdmin": true,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "createdAt": 1750236056860,
+    "expiresAt": 1750237856860,
+    "ipAddress": null,
+    "userAgent": null
   }
 ]

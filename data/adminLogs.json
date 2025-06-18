@@ -148,5 +148,18 @@
     },
     "ipAddress": null,
     "userAgent": null
+  },
+  {
+    "id": "log_1750236059997_dr4h52co",
+    "timestamp": 1750236059997,
+    "adminId": "admin_1746190912056_9884fa",
+    "adminUsername": "admin1",
+    "action": "start_election",
+    "details": {
+      "message": "Admin started the election",
+      "duration": null
+    },
+    "ipAddress": null,
+    "userAgent": null
   }
 ]

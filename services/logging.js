@@ -1,4 +1,5 @@
 const fileDb = require('./fileDb');
+const logger = require('../services/logger');
 
 async function logAdminAction(adminId, adminUsername, action, details) {
   try {
@@ -17,7 +18,7 @@ async function logAdminAction(adminId, adminUsername, action, details) {
     await fileDb.create('adminLogs', logEntry);
     return true;
   } catch (err) {
-    console.error('Error logging admin action:', err);
+    logger.error('Error logging admin action:', err);
     return false;
   }
 }

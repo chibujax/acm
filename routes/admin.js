@@ -5,6 +5,7 @@ const fileDb = require('../services/fileDb');
 const votingService = require('../services/voting');
 const authMiddleware = require('../middlewares/auth');
 const security = require('../utils/security');
+const logger = require('../services/logger');
 
 /**
  * Get dashboard data route
@@ -16,7 +17,7 @@ router.get('/dashboard', authMiddleware.authenticateAdmin, async (req, res) => {
     
     res.json(dashboardData);
   } catch (err) {
-    console.error('Error in get dashboard data route:', err);
+    logger.error('Error in get dashboard data route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -66,7 +67,7 @@ router.post('/election/start', [
     
     res.json(result);
   } catch (err) {
-    console.error('Error in start election route:', err);
+    logger.error('Error in start election route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -101,7 +102,7 @@ router.post('/election/stop', [
     
     res.json(result);
   } catch (err) {
-    console.error('Error in end election route:', err);
+    logger.error('Error in end election route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -119,7 +120,7 @@ router.get('/results', authMiddleware.authenticateAdmin, async (req, res) => {
     
     res.json(results);
   } catch (err) {
-    console.error('Error in admin results route:', err);
+    logger.error('Error in admin results route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -140,7 +141,7 @@ router.get('/positions', authMiddleware.authenticateAdmin, async (req, res) => {
       positions
     });
   } catch (err) {
-    console.error('Error in get positions route:', err);
+    logger.error('Error in get positions route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -182,7 +183,7 @@ router.post('/positions', authMiddleware.authenticateAdmin, async (req, res) => 
       position: positionRecord
     });
   } catch (err) {
-    console.error('Error in create position route:', err);
+    logger.error('Error in create position route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -233,7 +234,7 @@ router.put('/positions/:id', authMiddleware.authenticateAdmin, async (req, res) 
       position: updatedPosition
     });
   } catch (err) {
-    console.error('Error in update position route:', err);
+    logger.error('Error in update position route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -277,7 +278,7 @@ router.delete('/positions/:id', authMiddleware.authenticateAdmin, async (req, re
       message: 'Position deleted successfully'
     });
   } catch (err) {
-    console.error('Error in delete position route:', err);
+    logger.error('Error in delete position route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -298,7 +299,7 @@ router.get('/candidates', authMiddleware.authenticateAdmin, async (req, res) => 
       candidates
     });
   } catch (err) {
-    console.error('Error in get candidates route:', err);
+    logger.error('Error in get candidates route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -352,7 +353,7 @@ router.post('/candidates', authMiddleware.authenticateAdmin, async (req, res) =>
       candidate: candidateRecord
     });
   } catch (err) {
-    console.error('Error in create candidate route:', err);
+    logger.error('Error in create candidate route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -421,7 +422,7 @@ router.put('/candidates/:id', authMiddleware.authenticateAdmin, async (req, res)
       candidate: updatedCandidate
     });
   } catch (err) {
-    console.error('Error in update candidate route:', err);
+    logger.error('Error in update candidate route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -454,7 +455,7 @@ router.delete('/candidates/:id', authMiddleware.authenticateAdmin, async (req, r
       message: 'Candidate deleted successfully'
     });
   } catch (err) {
-    console.error('Error in delete candidate route:', err);
+    logger.error('Error in delete candidate route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -486,7 +487,7 @@ router.get('/members', authMiddleware.authenticateAdmin, async (req, res) => {
       members: sanitizedMembers
     });
   } catch (err) {
-    console.error('Error in get members route:', err);
+    logger.error('Error in get members route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -539,7 +540,7 @@ router.post('/members', authMiddleware.authenticateAdmin, async (req, res) => {
       member: memberRecord
     });
   } catch (err) {
-    console.error('Error in create member route:', err);
+    logger.error('Error in create member route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -590,7 +591,7 @@ router.put('/members/:id', authMiddleware.authenticateAdmin, async (req, res) =>
       member: updatedMember
     });
   } catch (err) {
-    console.error('Error in update member route:', err);
+    logger.error('Error in update member route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -633,7 +634,7 @@ router.delete('/members/:id', authMiddleware.authenticateAdmin, async (req, res)
       message: 'Member deleted successfully'
     });
   } catch (err) {
-    console.error('Error in delete member route:', err);
+    logger.error('Error in delete member route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -662,7 +663,7 @@ router.get('/permissions', authMiddleware.authenticateAdmin, async (req, res) =>
       permissions: admin.permissions || []
     });
   } catch (err) {
-    console.error('Error in get admin permissions route:', err);
+    logger.error('Error in get admin permissions route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'

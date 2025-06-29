@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const votingService = require('../services/voting');
 const authMiddleware = require('../middlewares/auth');
+const logger = require('../services/logger');
 
 /**
  * Get ballot route - Returns positions and candidates
@@ -10,7 +11,7 @@ const authMiddleware = require('../middlewares/auth');
 router.get('/ballot', authMiddleware.authenticateUser, async (req, res) => {
   try {
     // Check if election is active
-    const status = votingService.getElectionStatus();
+    const status = await votingService.getElectionStatus();
     
     if (!status.isActive) {
       return res.status(403).json({
@@ -24,7 +25,7 @@ router.get('/ballot', authMiddleware.authenticateUser, async (req, res) => {
     
     res.json(ballot);
   } catch (err) {
-    console.error('Error in get ballot route:', err);
+    logger.error('Error in get ballot route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -41,7 +42,7 @@ router.post('/submit', [
 ], async (req, res) => {
   try {
     // Check if election is active
-    const status = votingService.getElectionStatus();
+    const status = await votingService.getElectionStatus();
     
     if (!status.isActive) {
       return res.status(403).json({
@@ -69,7 +70,7 @@ router.post('/submit', [
     
     res.json(result);
   } catch (err) {
-    console.error('Error in submit vote route:', err);
+    logger.error('Error in submit vote route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -84,7 +85,7 @@ router.post('/submit', [
 router.get('/results', async (req, res) => {
   try {
     // Get election status
-    const status = votingService.getElectionStatus();
+    const status = await votingService.getElectionStatus();
     
     // Only allow access if election is ended
     if (!status.endTime) {
@@ -99,7 +100,7 @@ router.get('/results', async (req, res) => {
     
     res.json(results);
   } catch (err) {
-    console.error('Error in public results route:', err);
+    logger.error('Error in public results route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -112,7 +113,7 @@ router.get('/results', async (req, res) => {
  */
 router.get('/status', async (req, res) => {
   try {
-    const status = votingService.getElectionStatus();
+    const status = await votingService.getElectionStatus();
     
     // Format start and end times if they exist
     const formattedStatus = {
@@ -127,7 +128,7 @@ router.get('/status', async (req, res) => {
       status: formattedStatus
     });
   } catch (err) {
-    console.error('Error in election status route:', err);
+    logger.error('Error in election status route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'

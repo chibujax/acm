@@ -1,6 +1,7 @@
 // auth.js - Authentication middleware
 const authService = require('../services/auth');
 const fileDb = require('../services/fileDb');
+const logger = require('../services/logger');
 
 /**
  * Middleware to authenticate user sessions
@@ -37,7 +38,7 @@ async function authenticateUser(req, res, next) {
     // Proceed to the next middleware or route handler
     next();
   } catch (err) {
-    console.error('Authentication error:', err);
+    logger.error('Authentication error:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -54,10 +55,10 @@ async function authenticateAdmin(req, res, next) {
     // Get admin token from cookies
     const adminToken = req.cookies.admin_token;
     
-    console.log(`Admin authentication check - token present: ${!!adminToken}`);
+    logger.info(`Admin authentication check - token present: ${!!adminToken}`);
     
     if (!adminToken) {
-      console.log('No admin token found in cookies');
+      logger.info('No admin token found in cookies');
       return res.status(401).json({
         success: false,
         message: 'Admin authentication required'
@@ -67,12 +68,12 @@ async function authenticateAdmin(req, res, next) {
     // Validate admin session
     const isValidAdmin = await authService.validateAdminSession(adminToken);
     
-    console.log(`Admin token validation result: ${isValidAdmin}`);
+    logger.info(`Admin token validation result: ${isValidAdmin}`);
     
     if (!isValidAdmin) {
       // Clear invalid admin token cookie
       res.clearCookie('admin_token');
-      console.log('Invalid admin token - cookie cleared');
+      logger.info('Invalid admin token - cookie cleared');
       
       return res.status(401).json({
         success: false,
@@ -82,12 +83,12 @@ async function authenticateAdmin(req, res, next) {
     
     // Attach admin status to request
     req.isAdmin = true;
-    console.log('Admin authenticated successfully');
+    logger.info('Admin authenticated successfully');
     
     // Proceed to the next middleware or route handler
     next();
   } catch (err) {
-    console.error('Admin authentication error:', err);
+    logger.error('Admin authentication error:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -120,7 +121,7 @@ async function checkVotingEligibility(req, res, next) {
     // User is eligible to vote, proceed
     next();
   } catch (err) {
-    console.error('Voting eligibility check error:', err);
+    logger.error('Voting eligibility check error:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -150,7 +151,7 @@ async function attachUserIfAuthenticated(req, res, next) {
     // Proceed to the next middleware or route handler regardless
     next();
   } catch (err) {
-    console.error('Error attaching user session:', err);
+    logger.error('Error attaching user session:', err);
     // Proceed anyway, this is an optional middleware
     next();
   }
@@ -191,7 +192,7 @@ async function authenticateAdmin(req, res, next) {
     // Proceed to the next middleware or route handler
     next();
   } catch (err) {
-    console.error('Admin authentication error:', err);
+    logger.error('Admin authentication error:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -231,14 +232,14 @@ function checkPermission(req, res, next) {
         next();
       })
       .catch(err => {
-        console.error('Error getting admin details:', err);
+        logger.error('Error getting admin details:', err);
         return res.status(500).json({
           success: false,
           message: 'Internal server error'
         });
       });
   } catch (err) {
-    console.error('Permission check error:', err);
+    logger.error('Permission check error:', err);
     return res.status(500).json({
       success: false,
       message: 'Internal server error'

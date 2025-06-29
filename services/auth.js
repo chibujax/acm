@@ -5,6 +5,7 @@ const smsService = require('./sms');
 const security = require('../utils/security');
 const config = require('../config/config');
 const bcrypt = require('bcrypt');
+const logger = require('../services/logger');
 
 // Store active OTPs in memory (in production, use a proper database or Redis)
 const activeOTPs = new Map();
@@ -48,7 +49,7 @@ async function verifyMember(phoneNumber) {
       message: 'Verification code sent to your phone.'
     };
   } catch (err) {
-    console.error('Error verifying member:', err);
+    logger.error('Error verifying member:', err);
     throw err;
   }
 }
@@ -149,7 +150,7 @@ async function verifyOTP(phoneNumber, otp) {
       voteId: vote ? vote.id : null
     };
   } catch (err) {
-    console.error('Error verifying OTP:', err);
+    logger.error('Error verifying OTP:', err);
     throw err;
   }
 }
@@ -193,7 +194,7 @@ async function resendOTP(phoneNumber) {
       message: 'New verification code sent to your phone.'
     };
   } catch (err) {
-    console.error('Error resending OTP:', err);
+    logger.error('Error resending OTP:', err);
     throw err;
   }
 }
@@ -248,7 +249,7 @@ async function validateSession(sessionToken) {
       voteId: vote ? vote.id : null
     };
   } catch (err) {
-    console.error('Error validating session:', err);
+    logger.error('Error validating session:', err);
     throw err;
   }
 }
@@ -268,7 +269,7 @@ async function endSession(sessionToken) {
     const result = await fileDb.remove('sessions', 'id', sessionToken);
     return result;
   } catch (err) {
-    console.error('Error ending session:', err);
+    logger.error('Error ending session:', err);
     throw err;
   }
 }
@@ -338,7 +339,7 @@ async function verifyAdmin(username, password) {
       isUsingDefaultPassword
     };
   } catch (err) {
-    console.error('Error verifying admin:', err);
+    logger.error('Error verifying admin:', err);
     throw err;
   }
 }
@@ -374,7 +375,7 @@ async function validateAdminSession(adminToken) {
     
     return true;
   } catch (err) {
-    console.error('Error validating admin session:', err);
+    logger.error('Error validating admin session:', err);
     throw err;
   }
 }

@@ -1,6 +1,7 @@
 // sms.js - SMS service for OTP delivery
 const twilio = require('twilio');
 const config = require('../config/config');
+const logger = require('./logger');
 
 // Initialize Twilio client if credentials are provided
 let twilioClient = null;
@@ -8,9 +9,9 @@ let twilioClient = null;
 if (config.twilio.accountSid && config.twilio.authToken) {
   try {
     twilioClient = twilio(config.twilio.accountSid, config.twilio.authToken);
-    console.log("configured", twilioClient)
+    logger.info("configured", twilioClient)
   } catch (error) {
-    console.log("Error configuring twilio", error.message)
+    logger.info("Error configuring twilio", error.message)
   }
   
   
@@ -25,7 +26,7 @@ if (config.twilio.accountSid && config.twilio.authToken) {
 async function sendOTP(phoneNumber, otp) {
   // Check if Twilio is configured
   if (!twilioClient) {
-    console.warn('Twilio not configured. Would send OTP:', otp, 'to:', phoneNumber);
+    logger.warn('Twilio not configured. Would send OTP:', otp, 'to:', phoneNumber);
     
     // For development/testing, return a mock successful response
     return {
@@ -46,10 +47,10 @@ async function sendOTP(phoneNumber, otp) {
       from: config.twilio.phoneNumber
     });
     
-    console.log(`OTP sent to ${phoneNumber}, SID: ${result.sid}`);
+    logger.info(`OTP sent to ${phoneNumber}, SID: ${result.sid}`);
     return result;
   } catch (err) {
-    console.error('Error sending OTP via Twilio:', err);
+    logger.error('Error sending OTP via Twilio:', err);
     throw err;
   }
 }
@@ -63,7 +64,7 @@ async function sendOTP(phoneNumber, otp) {
 async function sendNotification(phoneNumber, message) {
   // Check if Twilio is configured
   if (!twilioClient) {
-    console.warn('Twilio not configured. Would send notification:', message, 'to:', phoneNumber);
+    logger.warn('Twilio not configured. Would send notification:', message, 'to:', phoneNumber);
     
     // For development/testing, return a mock successful response
     return {
@@ -81,10 +82,10 @@ async function sendNotification(phoneNumber, message) {
       from: config.twilio.phoneNumber
     });
     
-    console.log(`Notification sent to ${phoneNumber}, SID: ${result.sid}`);
+    logger.info(`Notification sent to ${phoneNumber}, SID: ${result.sid}`);
     return result;
   } catch (err) {
-    console.error('Error sending notification via Twilio:', err);
+    logger.error('Error sending notification via Twilio:', err);
     throw err;
   }
 }

@@ -2,15 +2,70 @@
 const fileDb = require('./fileDb');
 const security = require('../utils/security');
 const helpers = require('../utils/helpers');
+const logger = require('../services/logger');
 
-// Keep track of election status in memory
-// In production, this should be stored in a database
-let electionStatus = {
+// Default election status structure
+const defaultElectionStatus = {
   isActive: false,
   startTime: null,
   endTime: null,
   duration: 24 * 60 * 60 * 1000, // 24 hours by default
 };
+
+/**
+ * Load election status from file
+ * @returns {Object} The election status
+ */
+async function loadElectionStatus() {
+  try {
+    const statusArray = await fileDb.read('electionStatus');
+    
+    // If file is empty or doesn't contain valid data, return default
+    if (!statusArray || statusArray.length === 0) {
+      return { ...defaultElectionStatus };
+    }
+    
+    // Return the first (and should be only) status record
+    const status = statusArray[0];
+    
+    // Ensure all required fields exist with defaults
+    return {
+      isActive: status.isActive || false,
+      startTime: status.startTime || null,
+      endTime: status.endTime || null,
+      duration: status.duration || 24 * 60 * 60 * 1000
+    };
+  } catch (err) {
+    logger.error('Error loading election status:', err);
+    return { ...defaultElectionStatus };
+  }
+}
+
+/**
+ * Save election status to file
+ * @param {Object} status - The election status to save
+ * @returns {boolean} True if successful
+ */
+async function saveElectionStatus(newStatus, oldStatus) {
+  try {
+    // Save as an array with a single object (consistent with other data files)
+    await fileDb.update('electionStatus', 'duration', oldStatus.duration, newStatus);
+    return true;
+  } catch (err) {
+    logger.error('Error saving election status:', err);
+    
+    // If update fails (file might not exist), try creating it
+    try {
+      const fs = require('fs').promises;
+      const config = require('../config/config');
+      await fs.writeFile(config.dataFiles.electionStatus, JSON.stringify([newStatus], null, 2));
+      return true;
+    } catch (createErr) {
+      logger.error('Error creating election status file:', createErr);
+      return false;
+    }
+  }
+}
 
 /**
  * Get the current ballot
@@ -58,7 +113,7 @@ async function getBallot() {
       positions: ballot
     };
   } catch (err) {
-    console.error('Error getting ballot:', err);
+    logger.error('Error getting ballot:', err);
     throw err;
   }
 }
@@ -71,6 +126,9 @@ async function getBallot() {
  */
 async function submitVote(memberId, votes) {
   try {
+    // Get current election status
+    const electionStatus = await loadElectionStatus();
+    
     // Check if election is active
     if (!electionStatus.isActive) {
       return {
@@ -147,7 +205,7 @@ async function submitVote(memberId, votes) {
       voteId
     };
   } catch (err) {
-    console.error('Error submitting vote:', err);
+    logger.error('Error submitting vote:', err);
     throw err;
   }
 }
@@ -159,6 +217,9 @@ async function submitVote(memberId, votes) {
  */
 async function getResults(detailed = false) {
   try {
+    // Get current election status
+    const electionStatus = await loadElectionStatus();
+    
     // Get positions, candidates, and votes
     const positions = await fileDb.read('positions');
     const candidates = await fileDb.read('candidates');
@@ -238,7 +299,7 @@ async function getResults(detailed = false) {
       }
     };
   } catch (err) {
-    console.error('Error getting results:', err);
+    logger.error('Error getting results:', err);
     throw err;
   }
 }
@@ -250,6 +311,9 @@ async function getResults(detailed = false) {
  */
 async function startElection(duration) {
   try {
+    // Get current election status
+    const electionStatus = await loadElectionStatus();
+    
     // Check if election is already active
     if (electionStatus.isActive) {
       return {
@@ -260,20 +324,23 @@ async function startElection(duration) {
     
     // Set election status
     const now = Date.now();
-    electionStatus = {
+    const newStatus = {
       isActive: true,
       startTime: now,
       endTime: null,
-      duration: duration || (24 * 60 * 60 * 1000) // 24 hours by default
+      duration: electionStatus.duration || (24 * 60 * 60 * 1000)
     };
+
+    // Save to file
+    await saveElectionStatus(newStatus, electionStatus);
     
     return {
       success: true,
       message: 'Election started successfully',
-      electionStatus
+      electionStatus: newStatus
     };
   } catch (err) {
-    console.error('Error starting election:', err);
+    logger.error('Error starting election:', err);
     throw err;
   }
 }
@@ -284,6 +351,9 @@ async function startElection(duration) {
  */
 async function endElection() {
   try {
+    // Get current election status
+    const electionStatus = await loadElectionStatus();
+    
     // Check if election is active
     if (!electionStatus.isActive) {
       return {
@@ -294,16 +364,22 @@ async function endElection() {
     
     // Set election status
     const now = Date.now();
-    electionStatus.isActive = false;
-    electionStatus.endTime = now;
+    const newStatus = {
+      ...electionStatus,
+      isActive: false,
+      endTime: now
+    };
+
+    // Save to file
+    await saveElectionStatus(newStatus, electionStatus);
     
     return {
       success: true,
       message: 'Election ended successfully',
-      electionStatus
+      electionStatus: newStatus
     };
   } catch (err) {
-    console.error('Error ending election:', err);
+    logger.error('Error ending election:', err);
     throw err;
   }
 }
@@ -312,41 +388,68 @@ async function endElection() {
  * Get election status
  * @returns {Object} The current election status
  */
-function getElectionStatus() {
-  // Calculate time remaining if election is active
-  let timeRemaining = null;
-  
-  if (electionStatus.isActive && electionStatus.startTime) {
-    const now = Date.now();
-    const endTime = electionStatus.startTime + electionStatus.duration;
-    const remaining = endTime - now;
+async function getElectionStatus() {
+  try {
+    // Load current status from file
+    const electionStatus = await loadElectionStatus();
     
-    if (remaining <= 0) {
-      // Election should be ended
-      electionStatus.isActive = false;
-      electionStatus.endTime = now;
-      timeRemaining = '0h 0m';
-    } else {
-      // Format time remaining
-      const hours = Math.floor(remaining / (60 * 60 * 1000));
-      const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
-      timeRemaining = `${hours}h ${minutes}m`;
+    // Calculate time remaining if election is active
+    let timeRemaining = null;
+    
+    if (electionStatus.isActive && electionStatus.startTime) {
+      const now = Date.now();
+      const endTime = electionStatus.startTime + electionStatus.duration;
+      const remaining = endTime - now;
+      
+      if (remaining <= 0) {
+        // Election should be ended automatically
+        const newStatus = {
+          ...electionStatus,
+          isActive: false,
+          endTime: now
+        };
+        
+        // Save the updated status
+        await saveElectionStatus(newStatus, electionStatus);
+        
+        timeRemaining = '0h 0m';
+        
+        return {
+          isActive: false,
+          startTime: electionStatus.startTime,
+          endTime: now,
+          timeRemaining
+        };
+      } else {
+        // Format time remaining
+        const hours = Math.floor(remaining / (60 * 60 * 1000));
+        const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+        timeRemaining = `${hours}h ${minutes}m`;
+      }
     }
+    
+    return {
+      isActive: electionStatus.isActive,
+      startTime: electionStatus.startTime,
+      endTime: electionStatus.endTime,
+      timeRemaining
+    };
+  } catch (err) {
+    logger.error('Error getting election status:', err);
+    // Return default status on error
+    return {
+      isActive: false,
+      startTime: null,
+      endTime: null,
+      timeRemaining: null
+    };
   }
-  
-  return {
-    isActive: electionStatus.isActive,
-    startTime: electionStatus.startTime,
-    endTime: electionStatus.endTime,
-    timeRemaining
-  };
 }
 
 /**
  * Get dashboard data for admin
  * @returns {Object} Dashboard data
  */
-
 async function getDashboardData() {
   try {
     // Get members, votes, and results
@@ -360,7 +463,7 @@ async function getDashboardData() {
     const totalVotes = votes.length;
     
     // Get election status info
-    const status = getElectionStatus();
+    const status = await getElectionStatus();
     
     return {
       success: true,
@@ -373,7 +476,7 @@ async function getDashboardData() {
       results: resultsData.results
     };
   } catch (err) {
-    console.error('Error getting dashboard data:', err);
+    logger.error('Error getting dashboard data:', err);
     throw err;
   }
 }

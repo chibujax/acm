@@ -5,6 +5,7 @@ const authService = require('../services/auth');
 const authMiddleware = require('../middlewares/auth');
 const config = require('../config/config');
 const fileDb = require('../services/fileDb');
+const logger = require('../services/logger');
 
 /**
  * Login route - Verify member and send OTP
@@ -30,7 +31,7 @@ router.post('/login', async (req, res) => {
     
     res.json(result);
   } catch (err) {
-    console.error('Error in login route:', err);
+    logger.error('Error in login route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -73,7 +74,7 @@ router.post('/verify', async (req, res) => {
     
     res.json(result);
   } catch (err) {
-    console.error('Error in verify route:', err);
+    logger.error('Error in verify route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -105,7 +106,7 @@ router.post('/resend-otp', async (req, res) => {
     
     res.json(result);
   } catch (err) {
-    console.error('Error in resend OTP route:', err);
+    logger.error('Error in resend OTP route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -126,7 +127,7 @@ router.get('/session', authMiddleware.authenticateUser, async (req, res) => {
       voteId: req.session.voteId
     });
   } catch (err) {
-    console.error('Error in session route:', err);
+    logger.error('Error in session route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -155,7 +156,7 @@ router.post('/logout', async (req, res) => {
       message: 'Logged out successfully'
     });
   } catch (err) {
-    console.error('Error in logout route:', err);
+    logger.error('Error in logout route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -179,17 +180,17 @@ router.post('/admin/login', async (req, res) => {
     }
     
     // Log admin login attempt
-    console.log(`Admin login attempt: username=${username}`);
+    logger.log(`Admin login attempt: username=${username}`);
     
     // Verify admin credentials
     const result = await authService.verifyAdmin(username, password);
     
     if (!result.success) {
-      console.log(`Admin login failed: ${result.message}`);
+      logger.log(`Admin login failed: ${result.message}`);
       return res.status(401).json(result);
     }
     
-    console.log(`Admin login successful for: ${username}`);
+    logger.log(`Admin login successful for: ${username}`);
     
     // Set admin session cookie
     res.cookie('admin_token', result.adminToken, {
@@ -204,7 +205,7 @@ router.post('/admin/login', async (req, res) => {
     
     res.json(result);
   } catch (err) {
-    console.error('Error in admin login route:', err);
+    logger.error('Error in admin login route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -222,7 +223,7 @@ router.get('/admin/session', authMiddleware.authenticateAdmin, async (req, res) 
       isAdmin: true
     });
   } catch (err) {
-    console.error('Error in admin session route:', err);
+    logger.error('Error in admin session route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -251,7 +252,7 @@ router.post('/admin/logout', async (req, res) => {
       message: 'Admin logged out successfully'
     });
   } catch (err) {
-    console.error('Error in admin logout route:', err);
+    logger.error('Error in admin logout route:', err);
     res.status(500).json({
       success: false,
       message: 'Internal server error'
@@ -279,7 +280,7 @@ router.get('/admin/check-password', authMiddleware.authenticateAdmin, async (req
         isUsingDefaultPassword: admin.isDefaultPassword === true
       });
     } catch (err) {
-      console.error('Error checking admin password status:', err);
+      logger.error('Error checking admin password status:', err);
       res.status(500).json({
         success: false,
         message: 'Internal server error'
@@ -351,7 +352,7 @@ router.get('/admin/check-password', authMiddleware.authenticateAdmin, async (req
         message: 'Password changed successfully'
       });
     } catch (err) {
-      console.error('Error changing admin password:', err);
+      logger.error('Error changing admin password:', err);
       res.status(500).json({
         success: false,
         message: 'Internal server error'

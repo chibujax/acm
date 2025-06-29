@@ -2,6 +2,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const config = require('../config/config');
+const logger = require('../services/logger');
 
 /**
  * Initialize the database by creating required files and directories
@@ -17,15 +18,30 @@ async function initializeDatabase() {
       try {
         await fs.access(filePath);
       } catch (err) {
-        // File doesn't exist, create it with an empty array
-        await fs.writeFile(filePath, JSON.stringify([]));
-        console.log(`Created empty file: ${filePath}`);
+        // File doesn't exist, create it with appropriate default content
+        let defaultContent;
+        
+        if (key === 'electionStatus') {
+          // Special case for election status - create with default object
+          defaultContent = {
+            isActive: false,
+            startTime: null,
+            endTime: null,
+            duration: 24 * 60 * 60 * 1000 // 24 hours by default
+          };
+        } else {
+          // For other files, create with empty array
+          defaultContent = [];
+        }
+        
+        await fs.writeFile(filePath, JSON.stringify(defaultContent, null, 2));
+        logger.info(`Created empty file: ${filePath}`);
       }
     }
     
     return true;
   } catch (err) {
-    console.error('Error initializing database:', err);
+    logger.error('Error initializing database:', err);
     throw err;
   }
 }
@@ -50,11 +66,43 @@ async function read(entityType) {
     return JSON.parse(data || '[]');
   } catch (err) {
     if (err.code === 'ENOENT') {
-      // File doesn't exist, return empty array
+      // File doesn't exist, return appropriate default
+      if (entityType === 'electionStatus') {
+        return {
+          isActive: false,
+          startTime: null,
+          endTime: null,
+          duration: 24 * 60 * 60 * 1000
+        };
+      }
       return [];
     }
     
-    console.error(`Error reading ${entityType}:`, err);
+    logger.error(`Error reading ${entityType}:`, err);
+    throw err;
+  }
+}
+
+/**
+ * Write data to a file (overwrites existing content)
+ * @param {string} entityType - The entity type (e.g., 'members', 'votes', 'electionStatus')
+ * @param {*} data - The data to write (array for most entities, object for electionStatus)
+ * @returns {Promise<*>} A promise that resolves with the written data
+ */
+async function write(entityType, data) {
+  try {
+    const filePath = config.dataFiles[entityType];
+    
+    if (!filePath) {
+      throw new Error(`Unknown entity type: ${entityType}`);
+    }
+    
+    // Write the data to the file
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
+    
+    return data;
+  } catch (err) {
+    logger.error(`Error writing ${entityType}:`, err);
     throw err;
   }
 }
@@ -69,9 +117,15 @@ async function read(entityType) {
 async function findBy(entityType, field, value) {
   try {
     const records = await read(entityType);
+    
+    // Handle case where records might be an object (like electionStatus)
+    if (!Array.isArray(records)) {
+      return records[field] === value ? records : null;
+    }
+    
     return records.find(record => record[field] === value) || null;
   } catch (err) {
-    console.error(`Error finding ${entityType} by ${field}:`, err);
+    logger.error(`Error finding ${entityType} by ${field}:`, err);
     throw err;
   }
 }
@@ -86,9 +140,15 @@ async function findBy(entityType, field, value) {
 async function findAllBy(entityType, field, value) {
   try {
     const records = await read(entityType);
+    
+    // Handle case where records might be an object (like electionStatus)
+    if (!Array.isArray(records)) {
+      return records[field] === value ? [records] : [];
+    }
+    
     return records.filter(record => record[field] === value);
   } catch (err) {
-    console.error(`Error finding all ${entityType} by ${field}:`, err);
+    logger.error(`Error finding all ${entityType} by ${field}:`, err);
     throw err;
   }
 }
@@ -110,6 +170,11 @@ async function create(entityType, record) {
     // Read existing records
     const records = await read(entityType);
     
+    // Ensure we're working with an array
+    if (!Array.isArray(records)) {
+      throw new Error(`Cannot create record in ${entityType}: not an array-based entity`);
+    }
+    
     // Add the new record
     records.push(record);
     
@@ -118,7 +183,7 @@ async function create(entityType, record) {
     
     return record;
   } catch (err) {
-    console.error(`Error creating ${entityType}:`, err);
+    logger.error(`Error creating ${entityType}:`, err);
     throw err;
   }
 }
@@ -142,6 +207,16 @@ async function update(entityType, field, value, updates) {
     // Read existing records
     const records = await read(entityType);
     
+    // Handle case where records might be an object (like electionStatus)
+    if (!Array.isArray(records)) {
+      if (records[field] === value) {
+        const updatedRecord = { ...records, ...updates };
+        await fs.writeFile(filePath, JSON.stringify(updatedRecord, null, 2));
+        return updatedRecord;
+      }
+      return null;
+    }
+    
     // Find the record index
     const index = records.findIndex(record => record[field] === value);
     
@@ -157,7 +232,7 @@ async function update(entityType, field, value, updates) {
     
     return records[index];
   } catch (err) {
-    console.error(`Error updating ${entityType}:`, err);
+    logger.error(`Error updating ${entityType}:`, err);
     throw err;
   }
 }
@@ -180,6 +255,11 @@ async function remove(entityType, field, value) {
     // Read existing records
     const records = await read(entityType);
     
+    // Ensure we're working with an array
+    if (!Array.isArray(records)) {
+      throw new Error(`Cannot remove record from ${entityType}: not an array-based entity`);
+    }
+    
     // Find the record index
     const index = records.findIndex(record => record[field] === value);
     
@@ -195,7 +275,7 @@ async function remove(entityType, field, value) {
     
     return true;
   } catch (err) {
-    console.error(`Error removing ${entityType}:`, err);
+    logger.error(`Error removing ${entityType}:`, err);
     throw err;
   }
 }
@@ -203,6 +283,7 @@ async function remove(entityType, field, value) {
 module.exports = {
   initializeDatabase,
   read,
+  write,
   findBy,
   findAllBy,
   create,

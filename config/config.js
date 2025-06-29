@@ -23,6 +23,7 @@ module.exports = {
       sessions: './data/sessions.json',
       admins: './data/admins.json',
       adminLogs: './data/adminLogs.json',
+      electionStatus: './data/electionStatus.json',
     },
     
     // Twilio configuration (for SMS OTP)

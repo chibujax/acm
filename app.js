@@ -1,4 +1,3 @@
-// app.js - Express application setup
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -7,9 +6,16 @@ const fileDb = require('./services/fileDb');
 const security = require('./utils/security');
 const authMiddleware = require('./middlewares/auth');
 const authService = require('./services/auth');
+const logger = require('./services/logger'); 
 
 // Initialize express app
 const app = express();
+
+
+logger.info('Application starting up', { 
+  nodeVersion: process.version, 
+  environment: process.env.NODE_ENV || 'development' 
+});
 
 // Middleware
 app.use(bodyParser.json());
@@ -22,10 +28,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Initialize the database
 fileDb.initializeDatabase()
   .then(() => {
-    console.log('Database initialized successfully');
+    logger.info('Database initialized successfully');
   })
   .catch(err => {
-    console.error('Failed to initialize database:', err);
+    logger.error('Failed to initialize database', { error: err.message, stack: err.stack });
     process.exit(1);
   });
 
@@ -87,6 +93,25 @@ app.get('/admin/settings', (req, res) => {
 app.get('/admin/change-password', authMiddleware.authenticateAdmin, (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'admin', 'change-password.html'));
 });
+
+app.get('/admin/logs', authMiddleware.authenticateAdmin, async (req, res) => {
+  try {
+    const days = parseInt(req.query.days) || 7;
+    const logs = await logger.getRecentLogs(days);
+    
+    res.json({
+      success: true,
+      logs: logs.slice(0, 1000) // Limit to 1000 most recent entries
+    });
+  } catch (err) {
+    logger.error('Error fetching logs', { error: err.message });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch logs'
+    });
+  }
+});
+
 // Add this route to your app.js file
 app.get('/admin', async (req, res) => {
   try {
@@ -95,6 +120,7 @@ app.get('/admin', async (req, res) => {
     
     if (!adminToken) {
       // Not logged in, redirect to login page
+      logger.info('Admin access attempt without token, redirecting to login');
       return res.redirect('/admin/login');
     }
     
@@ -103,15 +129,17 @@ app.get('/admin', async (req, res) => {
     
     if (!isValidAdmin) {
       // Invalid session, clear cookie and redirect to login
+      logger.warn('Invalid admin session attempt', { token: adminToken.substring(0, 8) + '...' });
       res.clearCookie('admin_token');
       return res.redirect('/admin/login');
     }
     
     // Valid admin session, redirect to dashboard
+    logger.info('Admin successfully accessed dashboard');
     res.redirect('/admin/dashboard');
     
   } catch (err) {
-    console.error('Error in admin redirect:', err);
+    logger.error('Error in admin redirect', { error: err.message, stack: err.stack });
     res.redirect('/admin/login');
   }
 });
@@ -125,6 +153,11 @@ app.use((req, res, next) => {
   
   // Validate CSRF token
   if (!security.validateCSRF(req)) {
+    logger.warn('CSRF token validation failed', { 
+      path: req.path, 
+      method: req.method,
+      ip: req.ip 
+    });
     return res.status(403).json({
       success: false,
       message: 'Invalid CSRF token'
@@ -136,13 +169,35 @@ app.use((req, res, next) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  logger.error('Unhandled application error', { 
+    error: err.message, 
+    stack: err.stack,
+    path: req.path,
+    method: req.method 
+  });
   res.status(500).send('Something broke!');
 });
 
 // 404 handler
 app.use((req, res) => {
+  logger.warn('404 - Page not found', { path: req.path, method: req.method, ip: req.ip });
   res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+});
+
+// Clean old logs daily (optional)
+setInterval(() => {
+  logger.cleanOldLogs(30); // Keep logs for 30 days
+}, 24 * 60 * 60 * 1000); // Run daily
+
+// Log when server shuts down
+process.on('SIGINT', () => {
+  logger.info('Application shutting down gracefully');
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  logger.info('Application terminated');
+  process.exit(0);
 });
 
 // Export the app
